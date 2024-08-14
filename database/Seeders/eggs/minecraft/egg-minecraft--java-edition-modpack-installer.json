@@ -1,0 +1,62 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "meta": {
+        "version": "PTDL_v2",
+        "update_url": null
+    },
+    "exported_at": "2024-02-09T16:39:07+01:00",
+    "name": "Minecraft: Java Edition Modpack Installer",
+    "author": "modpack-installer@ric-rac.org",
+    "description": "Egg for installing Minecraft: Java Edition modpacks.",
+    "features": null,
+    "docker_images": {
+        "Alpine": "ghcr.io\/pterodactyl\/yolks:alpine"
+    },
+    "file_denylist": [],
+    "startup": "echo \"It seems like an error occurred during modpack installation. Please contact the system administrators for help.\"",
+    "config": {
+        "files": "{}",
+        "startup": "{}",
+        "logs": "{}",
+        "stop": "^C"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!\/bin\/ash\r\n# Minecraft: Java Edition Modpack Installer Script\r\n#\r\n# Server Files: \/mnt\/server\r\n\r\n# Create server directory\r\nmkdir -p \/mnt\/server\r\ncd \/mnt\/server\r\n\r\n# Update package lists, install curl and bash\r\napk add --no-cache --update curl bash\r\n\r\n# Install modpack installer\r\ncurl -o \/tmp\/minecraft-modpack-server-installer -L \"https:\/\/www.lier.link\/arnaud\/minecraft-modpack-server-installer\/x86_64-unknown-linux-musl\"\r\nchmod +x \/tmp\/minecraft-modpack-server-installer\r\n\r\n# Remove old modpack files if they exist.\r\nrm -rf libraries\r\nrm -rf mods\r\nrm -rf coremods\r\nrm -rf .fabric\r\nrm -f user_jvm_args.txt\r\nrm -f server.jar\r\n\r\n# Run the modpack installer tool\r\n\/tmp\/minecraft-modpack-server-installer --provider ${MODPACK_PROVIDER} --modpack-id ${MODPACK_ID} --modpack-version-id ${MODPACK_VERSION_ID} --directory \/mnt\/server\r\n\r\n# For (Neo)Forge servers, link unix_args.txt that'll get picked up by the start up command.\r\nif stat -t libraries\/net\/minecraftforge\/forge\/*\/unix_args.txt >\/dev\/null 2>&1\r\nthen\r\n    ln -sf libraries\/net\/minecraftforge\/forge\/*\/unix_args.txt unix_args.txt\r\nfi\r\n\r\nif stat -t libraries\/net\/neoforged\/forge\/*\/unix_args.txt >\/dev\/null 2>&1\r\nthen\r\n    ln -sf libraries\/net\/neoforged\/forge\/*\/unix_args.txt unix_args.txt\r\nfi\r\n\r\nrm \/tmp\/minecraft-modpack-server-installer",
+            "container": "eclipse-temurin:21-alpine",
+            "entrypoint": "ash"
+        }
+    },
+    "variables": [
+        {
+            "name": "Modpack ID",
+            "description": "A unique identifier for the modpack to install.",
+            "env_variable": "MODPACK_ID",
+            "default_value": "",
+            "user_viewable": false,
+            "user_editable": false,
+            "rules": "required|string",
+            "field_type": "text"
+        },
+        {
+            "name": "Modpack Version ID",
+            "description": "A unique identifier for the modpack version to install.",
+            "env_variable": "MODPACK_VERSION_ID",
+            "default_value": "",
+            "user_viewable": false,
+            "user_editable": false,
+            "rules": "required|string",
+            "field_type": "text"
+        },
+        {
+            "name": "Modpack Provider",
+            "description": "The modpack provider to use for the installation.",
+            "env_variable": "MODPACK_PROVIDER",
+            "default_value": "",
+            "user_viewable": false,
+            "user_editable": false,
+            "rules": "required|string|in:atlauncher,curseforge,feedthebeast,modrinth,technic,voidswrath",
+            "field_type": "text"
+        }
+    ]
+}
