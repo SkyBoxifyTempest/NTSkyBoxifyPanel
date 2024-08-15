@@ -8,6 +8,7 @@ import BackupContainer from '@/components/server/backups/BackupContainer';
 import NetworkContainer from '@/components/server/network/NetworkContainer';
 import StartupContainer from '@/components/server/startup/StartupContainer';
 import FileManagerContainer from '@/components/server/files/FileManagerContainer';
+import MinecraftPluginContainer from '@/components/server/minecraft-plugins/MinecraftPluginContainer';
 import ModpacksContainer from '@/components/server/modpacks/ModpacksContainer';
 import SettingsContainer from '@/components/server/settings/SettingsContainer';
 import AccountOverviewContainer from '@/components/dashboard/AccountOverviewContainer';
@@ -29,6 +30,8 @@ import {
     faPlayCircle,
     faTerminal,
     faUser,
+    faPuzzlePiece,
+    faBox
 } from '@fortawesome/free-solid-svg-icons';
 
 // Each of the router files is already code split out appropriately — so
@@ -110,7 +113,16 @@ export default {
             permission: 'file.*',
             name: 'Modpacks',
             component: ModpacksContainer,
-            eggIds: [1, 3],
+            eggIds: [1, 2, 3, 4, 5],
+            iconProp: faBox,
+        },
+        {
+            path: '/minecraft-plugins',
+            permission: 'file.*',
+            name: 'Plugins',
+            component: MinecraftPluginContainer,
+            eggIds: [1, 2, 3, 4, 5],
+            iconProp: faPuzzlePiece,
         },
         {
             path: '/files/:action(edit|new)',
